@@ -3,6 +3,7 @@ package com.atomapgroup.architecturecomponentstest;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,8 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 /**
  * create by moontasirul at 10 Oct-2018
  */
-public class AddNoteActivity extends AppCompatActivity {
+public class AddAndEditNoteActivity extends AppCompatActivity {
 
+    public static final String EXTRA_ID ="EXTRA_ID";
     public static final String EXTRA_TITLE = "EXTRA_TITLE";
     public static final String EXTRA_DESCRIPTION = "cEXTRA_DESCRIPTION";
     public static final String EXTRA_PRIORITY = "EXTRA_PRIORITY";
@@ -41,7 +43,18 @@ public class AddNoteActivity extends AppCompatActivity {
         numberPickerPriority.setMaxValue(10);
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
-        setTitle("Add Note");
+
+        Intent intent = getIntent();
+
+        if(intent.hasExtra(EXTRA_ID)){
+            setTitle("Edit Note");
+            editTextTitle.setText(intent.getStringExtra(EXTRA_TITLE));
+            editTextDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION));
+            editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
+            numberPickerPriority.setValue(intent.getIntExtra(EXTRA_PRIORITY,1));
+        }else {
+            setTitle("Add Note");
+        }
     }
 
     private void saveNote() {
@@ -60,6 +73,12 @@ public class AddNoteActivity extends AppCompatActivity {
         data.putExtra(EXTRA_DESCRIPTION, description);
         data.putExtra(EXTRA_PRIORITY, priority);
         data.putExtra(EXTRA_DATE, date);
+
+        int id = getIntent().getIntExtra(EXTRA_ID,-1);
+        if(id!= -1){
+            Log.i("CheckID", id+"");
+            data.putExtra(EXTRA_ID,id);
+        }
 
         setResult(RESULT_OK, data);
         finish();
